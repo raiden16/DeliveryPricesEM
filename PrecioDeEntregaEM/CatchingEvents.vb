@@ -180,6 +180,8 @@
 
         Dim oOIPF As FrmtekOIPF
         Dim Respuesta As Integer
+        Dim coForm As SAPbouiCOM.Form
+        Dim Fecha As String
 
         Try
 
@@ -196,8 +198,11 @@
 
                             If Respuesta = 1 Then
 
+                                coForm = SBOApplication.Forms.Item(FormUID)
+                                Fecha = coForm.DataSources.UserDataSources.Item("dsDate").Value
+
                                 oOIPF = New FrmtekOIPF
-                                oOIPF.CrearOIPF(DocNum)
+                                oOIPF.CrearOIPF(DocNum, Fecha)
 
                             End If
 

@@ -98,6 +98,10 @@
         Try
             bindUserDataSources = 0
 
+            loDS = coForm.DataSources.UserDataSources.Add("dsDate", SAPbouiCOM.BoDataType.dt_DATE)
+            loText = coForm.Items.Item("4").Specific    'identifico mi caja de texto
+            loText.DataBind.SetBound(True, "", "dsDate")    ' uno mi userdatasources a mi caja de fecha
+
             oGrid = coForm.Items.Item("2").Specific
             oDataTable = coForm.DataSources.DataTables.Add("DelPri")
             oGrid.DataTable = oDataTable
@@ -123,6 +127,9 @@
         Try
 
             coForm = cSBOApplication.Forms.Item(psFormUID)
+
+            coForm.DataSources.UserDataSources.Item("dsDate").Value = Nothing
+
             oGrid = coForm.Items.Item("2").Specific
             oGrid.DataTable.Clear()
 

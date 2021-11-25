@@ -244,7 +244,7 @@
     End Function
 
 
-    Public Function CrearOIPF(ByVal DocNum As String)
+    Public Function CrearOIPF(ByVal DocNum As String, ByVal Fecha As String)
         Dim oOPDN As FrmtekOPDN
         Dim oGrid As SAPbouiCOM.Grid
         Dim oDataTable As SAPbouiCOM.DataTable
@@ -255,8 +255,8 @@
         Dim oLandedCost_ItemLine As SAPbobsCOM.LandedCost_ItemLine
         Dim oLandedCost_CostLine As SAPbobsCOM.LandedCost_CostLine
         Dim oLandedCostParams As SAPbobsCOM.LandedCostParams
-        Dim ObjType, AclName, CardCode, Fecha, WhsCode, AlcCode, Currency As String
-        Dim CostSum, Quantity, Price As Double
+        Dim ObjType, AclName, CardCode, WhsCode, AlcCode, Currency As String
+        Dim CostSum, Quantity, Price, Rate As Double
         Dim DocEntry, LineNum As Integer
 
         oRecSetH = cSBOCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset)
@@ -332,24 +332,27 @@
             If oRecSetH1.RecordCount = 1 Then
 
                 CardCode = oRecSetH1.Fields.Item("CardCode").Value
-                Fecha = Now.Date.Year & "/" & Now.Date.Month & "/" & Now.Date.Day
+                Fecha = Fecha.Substring(6, 4) & "/" & Fecha.Substring(3, 2) & "/" & Fecha.Substring(0, 2)
+                'Fecha = Now.Date.Year & "/" & Now.Date.Month & "/" & Now.Date.Day
+                '"24/11/2021"
 
                 oLandedCost.VendorCode = CardCode
                 oLandedCost.PostingDate = Fecha
                 oLandedCost.DueDate = Fecha
                 oLandedCost.Remarks = "Basado en Pedido de entrada de mercancías " & DocNum
+                'oLandedCost.DocumentCurrency = "MXN"
 
                 Dim oLandedCostEntry As Long = 0
                 'Dim GRPOEntry As Integer = 15
 
                 If ObjType = 69 Then
 
-                    stQueryH2 = "Select ""LineNum"",""Quantity"",""WhsCode"",""PriceFOB"" as ""Price"",""Currency"" From IPF1 where ""DocEntry""=" & oRecSetH1.Fields.Item("DocEntry").Value
+                    stQueryH2 = "Select ""LineNum"",""Quantity"",""WhsCode"",""PriceFOB"" as ""Price"",""Currency"",""CstmsRate"" as ""Rate"" From IPF1 where ""DocEntry""=" & oRecSetH1.Fields.Item("DocEntry").Value
                     oRecSetH2.DoQuery(stQueryH2)
 
                 Else
 
-                    stQueryH2 = "Select ""LineNum"",""Quantity"",""WhsCode"",""Price"",""Currency"" From PDN1 where ""DocEntry""=" & oRecSetH1.Fields.Item("DocEntry").Value
+                    stQueryH2 = "Select ""LineNum"",""Quantity"",""WhsCode"",""Price"",""Currency"",""Rate"" From PDN1 where ""DocEntry""=" & oRecSetH1.Fields.Item("DocEntry").Value
                     oRecSetH2.DoQuery(stQueryH2)
 
                 End If
